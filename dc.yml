@@ -1,0 +1,45 @@
+version: "3.1"
+services:
+  app:
+    image: $CONTAINER_RELEASE_IMAGE
+    logging:
+      driver: json-file
+      options:
+        labels: com.docker.swarm.service.name
+        max-size: 10m
+        max-file: 3
+    ports:
+      - "3443:8080"
+    secrets:
+      - secret1
+      - secret2
+    networks:
+      - lol
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '1'
+          memory: 3G
+        reservations:
+          cpus: '0.0'
+          memory: 0M
+      restart_policy:
+        condition: any
+        delay: 10s
+      update_config:
+        parallelism: 1
+        delay: 10s
+
+networks:
+  lol:
+    external: true
+
+secrets:
+  secret2:
+    external: true
+  secret1:
+    external: true
