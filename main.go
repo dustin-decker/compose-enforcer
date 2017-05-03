@@ -11,16 +11,15 @@ import (
 
 func main() {
 	var config *types.Config
-	config, err := LoadConfigFile("dc.yml")
+	config, err := LoadConfigFile("test.yml")
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	dockerWrite := []string{"SwarmCommand"}
 	validations := Validations{
 		StoragePath:       "/dockerstorage",
 		QualifiedService:  "some/service",
-		DockerWrite:       dockerWrite,
+		DockerWrite:       []string{"SwarmCommand"},
 		Secrets:           []string{"secret1", "secret2"},
 		Networks:          []string{"lol"},
 		MemoryLimit:       "3G",
@@ -28,6 +27,7 @@ func main() {
 		MemoryReservation: "3G",
 		CPUReservation:    "4",
 	}
+
 	err = ValidateConfig(validations, config)
 	if err != nil {
 		log.Fatal(err.Error())
