@@ -17,7 +17,7 @@ func main() {
 	}
 
 	dockerWrite := []string{"SwarmCommand"}
-	Validations := Validations{
+	validations := Validations{
 		StoragePath:       "/dockerstorage",
 		QualifiedService:  "some/service",
 		DockerWrite:       dockerWrite,
@@ -28,7 +28,7 @@ func main() {
 		MemoryReservation: "3G",
 		CPUReservation:    "4",
 	}
-	_, err = ValidateConfig(Validations, config)
+	err = ValidateConfig(validations, config)
 	if err != nil {
 		log.Fatal(err.Error())
 	}

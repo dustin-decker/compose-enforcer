@@ -25,7 +25,7 @@ type Validations struct {
 }
 
 // ValidateVolumes validates a service's volumes to ensure they do what we allow
-func ValidateVolumes(Validations Validations, Service types.ServiceConfig) (bool, error) {
+func ValidateVolumes(Validations Validations, Service types.ServiceConfig) error {
 	for _, Volume := range Service.Volumes {
 
 		// Only allow reads to docker.sock
@@ -33,14 +33,14 @@ func ValidateVolumes(Validations Validations, Service types.ServiceConfig) (bool
 		// We don't use env vars for secrets - use docker secrets management instead
 		if Volume.Source == "/var/run/docker.sock" {
 			if Volume.ReadOnly == false {
-				return false, errors.New("Docker socket mount must be read only")
+				return errors.New("Docker socket mount must be read only")
 			}
 			continue
 		}
 
 		// Don't allow relative paths
 		if !path.IsAbs(Volume.Source) {
-			return false, errors.New("Volume paths must be absolute")
+			return errors.New("Volume paths must be absolute")
 		}
 
 		// Ensure that any other bind mounts are where they're allowed for that
@@ -49,49 +49,49 @@ func ValidateVolumes(Validations Validations, Service types.ServiceConfig) (bool
 		// Collapses traversals ../../
 		collapsedVolumePath := path.Join(Volume.Source)
 		if !strings.HasPrefix(collapsedVolumePath, allowedVolumePath) {
-			return false, fmt.Errorf("Volume mounts must be in '%s'", allowedVolumePath)
+			return fmt.Errorf("Volume mounts must be in '%s'", allowedVolumePath)
 		}
 
 	}
-	return true, nil
+	return nil
 }
 
 // ValidateSecrets validates that a service's secrets are permitted for the service
-func ValidateSecrets(Validations Validations, Service types.ServiceConfig) (bool, error) {
+func ValidateSecrets(Validations Validations, Service types.ServiceConfig) error {
 	for _, Secret := range Service.Secrets {
 		if !util.StringInSlice(Secret.Source, Validations.Secrets) {
-			return false, fmt.Errorf("Secret '%s' not in the whitelist", Secret.Source)
+			return fmt.Errorf("Secret '%s' not in the whitelist", Secret.Source)
 		}
 	}
-	return true, nil
+	return nil
 }
 
 // ValidateNetworks validates that a service's secrets are permitted for the service
-func ValidateNetworks(Validations Validations, Service types.ServiceConfig) (bool, error) {
+func ValidateNetworks(Validations Validations, Service types.ServiceConfig) error {
 	for Network := range Service.Networks {
 		if !util.StringInSlice(Network, Validations.Networks) {
-			return false, fmt.Errorf("Network '%s' not in the whitelist", Network)
+			return fmt.Errorf("Network '%s' not in the whitelist", Network)
 		}
 	}
-	return true, nil
+	return nil
 }
 
 // ValidateResources validates that a service's resources and limits specified are sensible
-func ValidateResources(Validations Validations, Service types.ServiceConfig) (bool, error) {
+func ValidateResources(Validations Validations, Service types.ServiceConfig) error {
 
 	// Ensure mem limit does not exceed our service max configured
 	if err := meetsMemoryConstraint(Service.Deploy.Resources.Limits.MemoryBytes,
 		Validations.MemoryLimit); err != nil {
-		return false, err
+		return err
 	}
 
 	// Ensure mem reservation does not exceed our service max configured
 	if err := meetsMemoryConstraint(Service.Deploy.Resources.Reservations.MemoryBytes,
 		Validations.MemoryReservation); err != nil {
-		return false, err
+		return err
 	}
 
-	return true, nil
+	return nil
 }
 
 func meetsMemoryConstraint(mem types.UnitBytes, memAllowed string) error {
@@ -106,31 +106,31 @@ func meetsMemoryConstraint(mem types.UnitBytes, memAllowed string) error {
 }
 
 // ValidateConfig ensures that the provided config follows our rules
-func ValidateConfig(Validations Validations, config *types.Config) (bool, error) {
+func ValidateConfig(Validations Validations, config *types.Config) error {
 	for _, Service := range config.Services {
 
-		_, err := ValidateVolumes(Validations, Service)
+		err := ValidateVolumes(Validations, Service)
 		if err != nil {
-			return false, err
+			return err
 		}
 
-		_, err = ValidateSecrets(Validations, Service)
+		err = ValidateSecrets(Validations, Service)
 		if err != nil {
-			return false, err
+			return err
 		}
 
-		_, err = ValidateNetworks(Validations, Service)
+		err = ValidateNetworks(Validations, Service)
 		if err != nil {
-			return false, err
+			return err
 		}
 
-		_, err = ValidateResources(Validations, Service)
+		err = ValidateResources(Validations, Service)
 		if err != nil {
-			return false, err
+			return err
 		}
 		fmt.Println(Service.NetworkMode)
 
 	}
 
-	return true, nil
+	return nil
 }
