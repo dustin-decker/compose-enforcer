@@ -7,7 +7,7 @@ var validations = Validations{
 	QualifiedService:  "some/service",
 	DockerWrite:       []string{"SwarmCommand"},
 	Secrets:           []string{"secret1", "secret2"},
-	Networks:          []string{"lol"},
+	Networks:          []string{"network1"},
 	MemoryLimit:       "3G",
 	CPULimit:          "4",
 	MemoryReservation: "3G",
@@ -58,6 +58,34 @@ func TestValidateVolumes(t *testing.T) {
 			err := ValidateVolumes(validations, Service)
 			if err == nil {
 				t.Error("Failed")
+			}
+		}
+	})
+
+}
+
+func TestValidateNetworks(t *testing.T) {
+	config, err := LoadConfigFile("test.yml")
+	if err != nil {
+		t.Error("Failed to load test.yml compose file")
+	}
+
+	t.Run("Network must be whitelisted for the service", func(t *testing.T) {
+		for _, Service := range config.Services {
+			validations.Networks = []string{"notYoNetwork"}
+			err := ValidateNetworks(validations, Service)
+			if err == nil {
+				t.Errorf("Failed")
+			}
+		}
+	})
+
+	t.Run("Network must be whitelisted for the service", func(t *testing.T) {
+		for _, Service := range config.Services {
+			validations.Networks = []string{"network1"}
+			err := ValidateNetworks(validations, Service)
+			if err != nil {
+				t.Error(err)
 			}
 		}
 	})

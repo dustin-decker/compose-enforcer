@@ -14,7 +14,7 @@ services:
       - secret1
       - secret2
     networks:
-      - lol
+      - network1
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     deploy:
