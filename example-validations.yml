@@ -1,0 +1,19 @@
+StoragePath:       "/dockerstorage"
+
+QualifiedService:  "some/service"
+
+DockerWrite:
+- SwarmCommand
+
+Secrets:
+- secret1
+- secret2
+
+Networks:
+- network1
+- network2
+
+MemoryLimit:       "3G"
+CPULimit:          "4"
+MemoryReservation: "3G"
+CPUReservation:    "4"
