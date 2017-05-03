@@ -64,6 +64,34 @@ func TestValidateVolumes(t *testing.T) {
 
 }
 
+func TestValidateSecrets(t *testing.T) {
+	config, err := LoadConfigFile("test.yml")
+	if err != nil {
+		t.Error("Failed to load test.yml compose file")
+	}
+
+	t.Run("Network must be whitelisted for the service", func(t *testing.T) {
+		for _, Service := range config.Services {
+			validations.Secrets = []string{"notYoSecret"}
+			err := ValidateSecrets(validations, Service)
+			if err == nil {
+				t.Errorf("Failed")
+			}
+		}
+	})
+
+	t.Run("Network must be whitelisted for the service", func(t *testing.T) {
+		for _, Service := range config.Services {
+			validations.Secrets = []string{"secret1", "secret2"}
+			err := ValidateSecrets(validations, Service)
+			if err != nil {
+				t.Error(err)
+			}
+		}
+	})
+
+}
+
 func TestValidateNetworks(t *testing.T) {
 	config, err := LoadConfigFile("test.yml")
 	if err != nil {
