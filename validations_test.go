@@ -119,3 +119,64 @@ func TestValidateNetworks(t *testing.T) {
 	})
 
 }
+
+func TestValidateResourcess(t *testing.T) {
+	config, err := LoadConfigFile("test.yml")
+	if err != nil {
+		t.Error("Failed to load test.yml compose file")
+	}
+
+	t.Run("Memory limit", func(t *testing.T) {
+		for _, Service := range config.Services {
+			validations.MemoryLimit = "1M"
+			err := ValidateResources(validations, Service)
+			if err == nil {
+				t.Errorf("Failed")
+			}
+		}
+	})
+
+	t.Run("Memory limit", func(t *testing.T) {
+		for _, Service := range config.Services {
+			validations.MemoryLimit = "999G"
+			err := ValidateResources(validations, Service)
+			if err != nil {
+				t.Error(err)
+			}
+		}
+	})
+}
+
+// t.Run("CPU limit", func(t *testing.T) {
+// 	for _, Service := range config.Services {
+// 		validations.CPULimit = "0.1"
+// 		err := ValidateResources(validations, Service)
+// 		if err == nil {
+// 			t.Errorf("Failed")
+// 		}
+// 	}
+// })
+//
+// t.Run("CPU limit", func(t *testing.T) {
+// 	for _, Service := range config.Services {
+// 		validations.CPULimit = "999"
+// 		err := ValidateResources(validations, Service)
+// 		if err != nil {
+// 			t.Error(err)
+// 		}
+// 	}
+// })
+
+func TestConfig(t *testing.T) {
+	config, err := LoadConfigFile("test.yml")
+	if err != nil {
+		t.Error("Failed to load test.yml compose file")
+	}
+
+	t.Run("Config", func(t *testing.T) {
+		err := ValidateConfig(validations, config)
+		if err != nil {
+			t.Error(err)
+		}
+	})
+}
