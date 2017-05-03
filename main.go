@@ -35,6 +35,8 @@ func main() {
 
 }
 
+// Jacked pretty much the rest of this file from docker/cli/loader_test.go
+
 // LoadConfigFile loads config from file!
 func LoadConfigFile(filePath string) (*types.Config, error) {
 	bytes, err := ioutil.ReadFile(filePath)
