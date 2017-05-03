@@ -14,16 +14,52 @@ var validations = Validations{
 	CPUReservation:    "4",
 }
 
-func TestVolumes(t *testing.T) {
+func TestValidateVolumes(t *testing.T) {
 	config, err := LoadConfigFile("test.yml")
 	if err != nil {
 		t.Error("Failed to load test.yml compose file")
 	}
 
-	t.Run("A=1", func(t *testing.T) {
+	t.Run("Docker sock must be read only", func(t *testing.T) {
 		for _, Service := range config.Services {
-			Service.Volumes[0].Source = "/var/run/docker.sock:/var/run/docker.sock:ro"
-			ValidateVolumes(validations, Service)
+			Service.Volumes[0].Source = "/var/run/docker.sock"
+			Service.Volumes[0].ReadOnly = false
+			err := ValidateVolumes(validations, Service)
+			if err == nil {
+				t.Errorf("Failed")
+			}
 		}
 	})
+
+	t.Run("Docker sock must be read only", func(t *testing.T) {
+		for _, Service := range config.Services {
+			Service.Volumes[0].Source = "/var/run/docker.sock"
+			Service.Volumes[0].ReadOnly = true
+			err := ValidateVolumes(validations, Service)
+			if err != nil {
+				t.Error(err)
+			}
+		}
+	})
+
+	t.Run("Volumes cannot have a relative path", func(t *testing.T) {
+		for _, Service := range config.Services {
+			Service.Volumes[0].Source = "run/docker.sock"
+			err := ValidateVolumes(validations, Service)
+			if err == nil {
+				t.Error("Failed")
+			}
+		}
+	})
+
+	t.Run("Must use allow volume mount path", func(t *testing.T) {
+		for _, Service := range config.Services {
+			Service.Volumes[0].Source = "/some/path"
+			err := ValidateVolumes(validations, Service)
+			if err == nil {
+				t.Error("Failed")
+			}
+		}
+	})
+
 }
