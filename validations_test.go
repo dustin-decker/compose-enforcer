@@ -165,27 +165,27 @@ func TestValidateResourcess(t *testing.T) {
 			}
 		}
 	})
-}
 
-// t.Run("CPU limit", func(t *testing.T) {
-// 	for _, Service := range config.Services {
-// 		validations.CPULimit = "0.1"
-// 		err := ValidateResources(validations, Service)
-// 		if err == nil {
-// 			t.Errorf("Failed")
-// 		}
-// 	}
-// })
-//
-// t.Run("CPU limit", func(t *testing.T) {
-// 	for _, Service := range config.Services {
-// 		validations.CPULimit = "999"
-// 		err := ValidateResources(validations, Service)
-// 		if err != nil {
-// 			t.Error(err)
-// 		}
-// 	}
-// })
+	t.Run("CPU limit", func(t *testing.T) {
+		for _, Service := range config.Services {
+			validations.CPULimit = "0.1"
+			err := ValidateResources(validations, Service)
+			if err == nil {
+				t.Errorf("Failed")
+			}
+		}
+	})
+
+	t.Run("CPU limit", func(t *testing.T) {
+		for _, Service := range config.Services {
+			validations.CPULimit = "999"
+			err := ValidateResources(validations, Service)
+			if err != nil {
+				t.Error(err)
+			}
+		}
+	})
+}
 
 func TestConfig(t *testing.T) {
 	config, err := LoadConfigFile("test.yml")
