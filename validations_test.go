@@ -14,6 +14,13 @@ var validations = Validations{
 	CPUReservation:    "4",
 }
 
+func TestLoadConfigFile(t *testing.T) {
+	_, err := LoadConfigFile("sdfjsdf.yml")
+	if err == nil {
+		t.Error("Loading non-existent file should fail")
+	}
+}
+
 func TestValidateVolumes(t *testing.T) {
 	config, err := LoadConfigFile("test.yml")
 	if err != nil {
