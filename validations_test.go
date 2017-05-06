@@ -8,9 +8,9 @@ var validations = Validations{
 	DockerWrite:       []string{"SwarmCommand"},
 	Secrets:           []string{"secret1", "secret2"},
 	Networks:          []string{"network1"},
-	MemoryLimit:       "3G",
+	MemoryLimit:       "4G",
 	CPULimit:          "4",
-	MemoryReservation: "3G",
+	MemoryReservation: "4G",
 	CPUReservation:    "4",
 }
 
@@ -139,6 +139,26 @@ func TestValidateResourcess(t *testing.T) {
 	t.Run("Memory limit", func(t *testing.T) {
 		for _, Service := range config.Services {
 			validations.MemoryLimit = "999G"
+			err := ValidateResources(validations, Service)
+			if err != nil {
+				t.Error(err)
+			}
+		}
+	})
+
+	t.Run("Memory reservation", func(t *testing.T) {
+		for _, Service := range config.Services {
+			validations.MemoryReservation = "1M"
+			err := ValidateResources(validations, Service)
+			if err == nil {
+				t.Errorf("Failed")
+			}
+		}
+	})
+
+	t.Run("Memory reservation", func(t *testing.T) {
+		for _, Service := range config.Services {
+			validations.MemoryReservation = "999G"
 			err := ValidateResources(validations, Service)
 			if err != nil {
 				t.Error(err)
