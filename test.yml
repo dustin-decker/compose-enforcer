@@ -22,11 +22,11 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: '1'
+          cpus: '2'
           memory: 3G
         reservations:
-          cpus: '0.0'
-          memory: 0M
+          cpus: '2'
+          memory: 3G
       restart_policy:
         condition: any
         delay: 10s
