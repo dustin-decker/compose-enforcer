@@ -5,8 +5,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/docker/docker/cli/compose/loader"
-	"github.com/docker/docker/cli/compose/types"
+	"github.com/docker/cli/cli/compose/loader"
+	"github.com/docker/cli/cli/compose/types"
 	"github.com/spf13/viper"
 )
 

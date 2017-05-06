@@ -4,11 +4,13 @@ import (
 	"errors"
 	"fmt"
 	"path"
+	"strconv"
 	"strings"
 
-	"github.com/docker/docker/cli/compose/types"
+	"github.com/docker/cli/cli/compose/types"
+
 	units "github.com/docker/go-units"
-	"github.com/sevoma/SwarmCommand/util"
+	"github.com/sevoma/goutil"
 )
 
 // Validations struct provides details used for whitelisting configurations
@@ -59,7 +61,7 @@ func ValidateVolumes(Validations Validations, Service types.ServiceConfig) error
 // ValidateSecrets validates that a service's secrets are permitted for the service
 func ValidateSecrets(Validations Validations, Service types.ServiceConfig) error {
 	for _, Secret := range Service.Secrets {
-		if !util.StringInSlice(Secret.Source, Validations.Secrets) {
+		if !goutil.StringInSlice(Secret.Source, Validations.Secrets) {
 			return fmt.Errorf("Secret '%s' not in the whitelist", Secret.Source)
 		}
 	}
@@ -69,7 +71,7 @@ func ValidateSecrets(Validations Validations, Service types.ServiceConfig) error
 // ValidateNetworks validates that a service's secrets are permitted for the service
 func ValidateNetworks(Validations Validations, Service types.ServiceConfig) error {
 	for Network := range Service.Networks {
-		if !util.StringInSlice(Network, Validations.Networks) {
+		if !goutil.StringInSlice(Network, Validations.Networks) {
 			return fmt.Errorf("Network '%s' not in the whitelist", Network)
 		}
 	}
@@ -91,6 +93,18 @@ func ValidateResources(Validations Validations, Service types.ServiceConfig) err
 		return err
 	}
 
+	// Ensure CPU limit does not exceed our service max configured
+	if err := meetsCPUConstraint(Service.Deploy.Resources.Limits.NanoCPUs,
+		Validations.CPULimit); err != nil {
+		return err
+	}
+
+	// Ensure CPU reservation does not exceed our service max configured
+	if err := meetsCPUConstraint(Service.Deploy.Resources.Reservations.NanoCPUs,
+		Validations.CPUReservation); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -101,6 +115,25 @@ func meetsMemoryConstraint(mem types.UnitBytes, memAllowed string) error {
 	}
 	if mem > types.UnitBytes(memAllowedBytes) {
 		return fmt.Errorf("Please keep memory limit <= %s", memAllowed)
+	}
+	return nil
+}
+
+func meetsCPUConstraint(cpu string, cpuAllowed string) error {
+	cpuAllowedFloat, err := strconv.ParseFloat(cpuAllowed, 64)
+	if err != nil {
+		return fmt.Errorf("Invalid CPUs provided")
+	}
+
+	cpuFloat, err := strconv.ParseFloat(cpu, 64)
+	if err != nil {
+		return fmt.Errorf("Invalid CPUs provided")
+	}
+
+	// nanoCPU := cpuAllowedFloat / math.Pow(10, -9)
+
+	if cpuFloat > cpuAllowedFloat {
+		return fmt.Errorf("Please keep memory limit <= %s", cpuAllowed)
 	}
 	return nil
 }

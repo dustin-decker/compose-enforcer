@@ -1,12 +1,14 @@
 vendors:
 - path: github.com/Microsoft/go-winio
-  rev: f3b1913901892ada21d52d0cffe1d4c7080d36b7
+  rev: 13736c32520969a64987228c21c138a4cfdb3720
 - path: github.com/Sirupsen/logrus
-  rev: 10f801ebc38b33738c9d17d50860f484a0988ff5
+  rev: 5b60b3d3ee017ed00bcd0225fcca7acab767844b
 - path: github.com/davecgh/go-spew
   rev: 346938d642f2ec3594ed81d874461961cd0faa76
+- path: github.com/docker/cli
+  rev: a6feb55a4821fd2b77fb7412e2955914359ed99d
 - path: github.com/docker/docker
-  rev: 4219156a6254bdc7d270f06742037df8e2708a9a
+  rev: 7ca86796c94c7ae0c62680ac664f97ab5f35ebec
 - path: github.com/docker/go-connections
   rev: e15c02316c12de00874640cd76311849de2aeed5
 - path: github.com/docker/go-units
@@ -14,7 +16,7 @@ vendors:
 - path: github.com/fsnotify/fsnotify
   rev: 4da3e2cfbabc9f751898f250b49f2439785783a1
 - path: github.com/hashicorp/hcl
-  rev: 7fa7fff964d035e8a162cce3a164b3ad02ad651b
+  rev: a4b07c25de5ff55ad3b8936cea69a79a3d95a855
 - path: github.com/magiconair/properties
   rev: 51463bfca2576e06c62a8504b5c0f06d61312647
 - path: github.com/mattn/go-shellwords
@@ -24,13 +26,13 @@ vendors:
 - path: github.com/pelletier/go-buffruneio
   rev: c37440a7cf42ac63b919c752ca73a85067e05992
 - path: github.com/pelletier/go-toml
-  rev: fe206efb84b2bc8e8cfafe6b4c1826622be969e3
+  rev: 97253b98df84f9eef872866d079e74b8265150f1
 - path: github.com/pkg/errors
-  rev: ff09b135c25aae272398c51a07235b90a75aa4f0
+  rev: c605e284fe17294bda444b34710735b29d1a9d90
 - path: github.com/pmezard/go-difflib
   rev: 792786c7400a136282c1664665ae0a8db921c6c2
 - path: github.com/sevoma/goutil
-  rev: b513d39ca37e18445288d7741be2363fa09d8a35
+  rev: f87c0e41dfe5b854505f996573478454ba9de5dc
 - path: github.com/spf13/afero
   rev: 9be650865eab0c12963d8753212f4f9c66cdcf12
 - path: github.com/spf13/cast
@@ -38,7 +40,7 @@ vendors:
 - path: github.com/spf13/jwalterweatherman
   rev: fa7ca7e836cf3a8bb4ebf799f472c12d7e903d66
 - path: github.com/spf13/pflag
-  rev: c990990ab4981d84da820b7b00c85139ca150b5f
+  rev: 80fe0fb4eba54167e2ccae1c6c950e72abf61b73
 - path: github.com/spf13/viper
   rev: 0967fc9aceab2ce9da34061253ac10fb99bba5b2
 - path: github.com/stretchr/testify
