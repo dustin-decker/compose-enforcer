@@ -185,6 +185,26 @@ func TestValidateResourcess(t *testing.T) {
 			}
 		}
 	})
+
+	t.Run("CPU reservation", func(t *testing.T) {
+		for _, Service := range config.Services {
+			validations.CPUReservation = "0.1"
+			err := ValidateResources(validations, Service)
+			if err == nil {
+				t.Errorf("Failed")
+			}
+		}
+	})
+
+	t.Run("CPU reservation", func(t *testing.T) {
+		for _, Service := range config.Services {
+			validations.CPUReservation = "999"
+			err := ValidateResources(validations, Service)
+			if err != nil {
+				t.Error(err)
+			}
+		}
+	})
 }
 
 func TestConfig(t *testing.T) {
