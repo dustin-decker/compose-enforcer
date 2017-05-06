@@ -21,6 +21,14 @@ func TestLoadConfigFile(t *testing.T) {
 	}
 }
 
+func TestLoadConfig(t *testing.T) {
+	var empty []byte
+	_, err := LoadConfig(empty)
+	if err == nil {
+		t.Error("Loading empty file should fail")
+	}
+}
+
 func TestValidateVolumes(t *testing.T) {
 	config, err := LoadConfigFile("test.yml")
 	if err != nil {
