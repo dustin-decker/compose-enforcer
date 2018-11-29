@@ -10,7 +10,7 @@ import (
 	"github.com/docker/cli/cli/compose/types"
 
 	units "github.com/docker/go-units"
-	"github.com/sevoma/goutil"
+	"github.com/dustin-decker/goutil"
 )
 
 // Validations struct provides details used for whitelisting configurations
@@ -34,10 +34,7 @@ func ValidateVolumes(Validations Validations, Service types.ServiceConfig) error
 		// Be aware that this still allows inspecting env vars - which may contain secrets
 		// We don't use env vars for secrets - use docker secrets management instead
 		if Volume.Source == "/var/run/docker.sock" {
-			if Volume.ReadOnly == false {
-				return errors.New("Docker socket mount must be read only")
-			}
-			continue
+			return errors.New("Docker socket mounted! This gives host privileges to the container!")
 		}
 
 		// Don't allow relative paths
